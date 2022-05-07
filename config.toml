@@ -1,0 +1,13 @@
+
+[image]
+  path = "./images"
+  secured = true
+
+  [image.scan]
+    enabled = true
+    interval = 5
+
+[server]
+  ginmode = "debug"
+  path = "/api"
+  port = 8080
