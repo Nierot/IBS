@@ -7,9 +7,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Auth() gin.HandlerFunc {
+func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// Request has a valid API token, so we do not check the JWT
+		if c.GetBool("api_token") {
+			c.Next()
+			return
+		}
+
 		tokenString := c.GetHeader("Authorization")
+
 		if tokenString == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "request does not contain an access token"})
 			c.Abort()
@@ -21,6 +28,16 @@ func Auth() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		c.Next()
+	}
+}
+
+func APITokenAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenString := c.GetHeader("Authorization")
+
+		c.Set("api_token", tokenString == "aaa")
 
 		c.Next()
 	}
