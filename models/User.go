@@ -7,18 +7,11 @@ import (
 
 type User struct {
 	gorm.Model
-	Name     string `json:"name" binding:"required"`
-	Username string `json:"username" gorm:"unique" binding:"required"`
-	Email    string `json:"email" gorm:"unique" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	Name     string `json:"Name" binding:"required"`
+	Username string `json:"Username" gorm:"unique" binding:"required"`
+	Email    string `json:"Email" gorm:"unique" binding:"required"`
+	Password string `json:"Password" binding:"required"`
 }
-
-// type UserInput struct {
-// 	Name     string `json:"name" binding:"required"`
-// 	Username string `json:"username" binding:"required"`
-// 	Email    string `json:"email" binding:"required"`
-// 	Password string `json:"password" binding:"required"`
-// }
 
 // https://codewithmukesh.com/blog/jwt-authentication-in-golang/
 

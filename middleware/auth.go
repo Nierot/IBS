@@ -2,8 +2,10 @@ package middleware
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/Nierot/InvictusBackend/auth"
+	"github.com/Nierot/InvictusBackend/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,7 +39,16 @@ func APITokenAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
 
-		c.Set("api_token", tokenString == "aaa")
+		var apiToken models.APIToken
+
+		tx := models.DB.First(&apiToken, "token = ?", tokenString)
+
+		if tx.Error != nil {
+			c.Set("api_token", false)
+		} else if apiToken.Token == tokenString {
+			c.Set("api_token", true)
+			tx.Update("last_used", time.Now())
+		}
 
 		c.Next()
 	}

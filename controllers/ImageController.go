@@ -21,7 +21,7 @@ func RandomImage(c *gin.Context) {
 	imagePath := viper.GetString("Image.Path")
 
 	if len(imageNames) == 0 {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "no images found"})
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": "no images found"})
 		return
 	}
 

@@ -12,7 +12,7 @@ func FindProducts(c *gin.Context) {
 
 	models.DB.Find(&products)
 
-	c.JSON(http.StatusOK, gin.H{"products": products})
+	c.JSON(http.StatusOK, gin.H{"Products": products})
 }
 
 func FindUniqueProducts(c *gin.Context) {
@@ -34,7 +34,7 @@ func FindUniqueProducts(c *gin.Context) {
 		unique = append(unique, name)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"products": unique})
+	c.JSON(http.StatusOK, gin.H{"Products": unique})
 }
 
 func CreateProduct(c *gin.Context) {
@@ -45,8 +45,8 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	p := models.Product{Name: input.Name, Price: input.Price, Content: input.Content}
+	p := models.Product{Name: input.Name, Alcohol: input.Alcohol, Volume: input.Volume}
 	models.DB.Create(&p)
 
-	c.JSON(http.StatusOK, gin.H{"product": p})
+	c.JSON(http.StatusOK, gin.H{"Product": p})
 }

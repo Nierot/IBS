@@ -17,23 +17,23 @@ func RegisterUser(c *gin.Context) {
 	var user models.User
 
 	if err := c.ShouldBindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		c.Abort()
 		return
 	}
 	if err := user.HashPassword(user.Password); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": err.Error()})
 		c.Abort()
 		return
 	}
 	record := models.DB.Create(&user)
 	if record.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": record.Error.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": record.Error.Error()})
 		c.Abort()
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"ID": user.ID, "Username": user.Name, "UserEmail": user.Email})
+	c.JSON(http.StatusCreated, gin.H{"ID": user.ID, "Username": user.Username, "UserEmail": user.Email})
 }
 
 func GenerateToken(c *gin.Context) {
@@ -43,7 +43,7 @@ func GenerateToken(c *gin.Context) {
 	)
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"Error": err.Error()})
 		c.Abort()
 		return
 	}
@@ -51,23 +51,23 @@ func GenerateToken(c *gin.Context) {
 	record := models.DB.Where("email = ?", req.Email).First(&user)
 
 	if record.Error != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": record.Error.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": record.Error.Error()})
 		c.Abort()
 		return
 	}
 
 	if !user.CheckPassword(req.Password) {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+		c.JSON(http.StatusUnauthorized, gin.H{"Error": "invalid credentials"})
 		c.Abort()
 		return
 	}
 
 	tokenString, err := auth.GenerateJWT(user.Email, user.Username)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": err.Error()})
 		c.Abort()
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": tokenString})
+	c.JSON(http.StatusOK, gin.H{"Token": tokenString})
 }

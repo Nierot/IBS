@@ -39,6 +39,9 @@ func main() {
 	}
 
 	secured := rest.Group("/secured").Use(middleware.APITokenAuth()).Use(middleware.JWTAuth())
+	{
+		secured.POST("/token/create", controllers.CreateAPIToken)
+	}
 
 	/*
 		Image related routes

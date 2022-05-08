@@ -16,6 +16,9 @@ func SetupDB() {
 
 	db.AutoMigrate(&Product{})
 	db.AutoMigrate(&User{})
+	db.AutoMigrate(&APIToken{})
+	db.AutoMigrate(&Sale{})
+	db.AutoMigrate(&Purchase{})
 
 	DB = db
 }
