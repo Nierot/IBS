@@ -1,7 +1,6 @@
 
 [image]
   path = "./images"
-  secured = true
 
   [image.scan]
     enabled = true

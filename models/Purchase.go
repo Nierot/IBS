@@ -17,7 +17,7 @@ type Purchase struct {
 
 type PurchaseInput struct {
 	UserID    int     `json:"UserID" binding:"required"`
-	ProductID int     `json:"Product" binding:"required"`
+	ProductID int     `json:"ProductID" binding:"required"`
 	Price     float32 `json:"Price" binding:"required"`
 	Deposit   float32 `json:"Deposit" binding:"required"`
 	Amount    int     `json:"Amount" binding:"required"`

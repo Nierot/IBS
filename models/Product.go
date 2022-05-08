@@ -11,6 +11,6 @@ type Product struct {
 
 type ProductInput struct {
 	Name    string  `json:"Name" binding:"required"`
-	Volume  int     `json:"Content" binding:"required"`
+	Volume  int     `json:"Volume" binding:"required"`
 	Alcohol float32 `json:"Alcohol" binding:"required"`
 }
