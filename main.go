@@ -16,6 +16,8 @@ func main() {
 
 	r.Use(gin.Logger())
 	r.Use(cors.Default())
+	r.LoadHTMLGlob("templates/*.tmpl")
+
 	gin.SetMode(viper.GetString("Server.GinMode"))
 
 	rest := r.Group(viper.GetString("Server.Path"))
@@ -23,17 +25,37 @@ func main() {
 	models.SetupDB()
 
 	/*
+		Templates
+	*/
+	templates := r.Group("").
+		Use(middleware.APITokenAuth()).
+		Use(middleware.JWTAuth()).
+		Use(middleware.LoginMiddleware())
+	{
+		templates.GET("/", controllers.IndexController)
+		templates.GET("/images", controllers.ImagesController)
+		templates.GET("/sales", controllers.SalesController)
+		templates.GET("/purchases", controllers.PurchasesController)
+		templates.GET("/users", controllers.UsersController)
+		templates.GET("/settings", controllers.SettingsController)
+		templates.GET("/products", controllers.ProductsController)
+	}
+
+	/*
 		Authentication related routes
 	*/
 	auth := rest.Group("/auth")
 	{
-		auth.POST("/login", controllers.GenerateToken)
+		auth.POST("/login", controllers.Login)
+		auth.POST("/token", controllers.GenerateToken)
 		auth.POST("/register", controllers.RegisterUser)
 	}
 
 	secured := rest.Group("")
 	secured.Use(middleware.APITokenAuth())
 	secured.Use(middleware.JWTAuth())
+
+	secured.POST("/token/create", controllers.CreateAPIToken)
 
 	products := secured.Group("/products")
 	{
@@ -42,12 +64,17 @@ func main() {
 		products.GET("/unique", controllers.FindUniqueProducts)
 	}
 
-	secured.POST("/token/create", controllers.CreateAPIToken)
-
 	purchases := secured.Group("/purchases")
 	{
 		purchases.POST("/", controllers.CreatePurchase)
 		purchases.GET("/all", controllers.GetAllPurchases)
+		purchases.GET("/:id", controllers.GetPurchasesPerUser)
+	}
+
+	sales := secured.Group("/sales")
+	{
+		sales.POST("/", controllers.CreateSale)
+		sales.GET("/", controllers.GetAllSales)
 	}
 
 	/*
@@ -70,6 +97,8 @@ func makeConfig() {
 	viper.SetDefault("Server.Port", 8080)
 	viper.SetDefault("Server.GinMode", "debug")
 	viper.SetDefault("Server.Path", "/api")
+
+	viper.SetDefault("Auth.TokenAge", 8600)
 
 	viper.SetDefault("Image.Path", "./images")
 

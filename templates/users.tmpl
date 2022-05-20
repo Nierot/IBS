@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <header>{{template "header.tmpl" .title}}</header>
+  </head>
+  <style>
+    .body {
+      display: flex;
+      margin-top: 20px;
+      width: calc(100vw - 200px);
+    }
+
+    table {
+      width: 100%;
+    }
+    
+    th {
+      width: 50%;
+    }
+  </style>
+
+  <script>
+    function deleteUser(id) {
+      if (confirm("Weet je zeker dat je deze gebruiker wil verwijderen?")) {
+        alert("Stel je voor dat dit werkt lmao")
+        //fetch({{.api}})
+        //window.location.href = "/users/delete/" + id;
+      }
+    }
+  </script>
+
+  <body>
+    {{template "sidebar.tmpl"}} 
+    <div class="body">
+      <div>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Gebruiker</th>
+            <th>Email</th>
+            <th>Verwijder</th>
+          </tr>
+          {{range .users}}
+            <tr>
+              <td>{{.ID}}</td>
+              <td>{{.Name}}</td>
+              <td>{{.Email}}</td>
+              <td>
+                <button onclick="deleteUser({{.ID}})">
+                  Verwijder
+                </button>
+              </td>
+            </tr>
+          {{end}}
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

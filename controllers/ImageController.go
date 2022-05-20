@@ -37,7 +37,7 @@ func RandomImage(c *gin.Context) {
 }
 
 func ImageScanner() {
-	fmt.Println("Scanning for images...")
+	fmt.Println("[ImageScanner] Scanning for images...")
 
 	imagePath := viper.GetString("Image.Path")
 	files, err := ioutil.ReadDir(imagePath)
@@ -47,6 +47,7 @@ func ImageScanner() {
 	}
 
 	if len(files) == len(imageNames) {
+		fmt.Println("[ImageScanner] Found no images")
 		return
 	}
 
@@ -57,7 +58,7 @@ func ImageScanner() {
 		}
 	}
 
-	fmt.Println("Found " + strconv.Itoa(len(imageNames)) + " images")
+	fmt.Println("[ImageScanner] Found " + strconv.Itoa(len(imageNames)) + " images")
 
 	time.AfterFunc(time.Duration(viper.GetInt("Image.Scan.Interval"))*time.Minute, ImageScanner)
 }
@@ -65,19 +66,6 @@ func ImageScanner() {
 func randImg(arr []string) (string, int) {
 	idx := rand.Intn(len(arr))
 	return arr[idx], idx
-}
-
-func minIdx(arr []int) int {
-	idx := 0
-	m := arr[idx]
-
-	for k, v := range arr {
-		if m > v {
-			m = v
-			idx = k
-		}
-	}
-	return idx
 }
 
 func remove(s []string, i int) []string {

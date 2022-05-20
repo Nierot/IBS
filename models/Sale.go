@@ -13,7 +13,7 @@ type Sale struct {
 
 type SaleInput struct {
 	UserID    int     `json:"UserID" binding:"required"`
-	ProductID int     `json:"Product" binding:"required"`
+	ProductID int     `json:"ProductID" binding:"required"`
 	Amount    int     `json:"Amount" binding:"required"`
 	Price     float32 `json:"Price" binding:"required"`
 }

@@ -31,3 +31,27 @@ func CreateSale(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"Sale": s})
 }
+
+func GetAllSales(c *gin.Context) {
+	var sales []models.Sale
+	var products []models.Product
+
+	salesTx := models.DB.Find(&sales)
+	productsTx := models.DB.Find(&products)
+
+	if salesTx.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": salesTx.Error.Error()})
+		return
+	}
+
+	if productsTx.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": productsTx.Error.Error()})
+		return
+	}
+
+	for idx, sale := range sales {
+		sales[idx].Product = products[sale.ProductID-1]
+	}
+
+	c.JSON(http.StatusOK, gin.H{"Sales": sales})
+}

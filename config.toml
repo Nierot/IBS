@@ -6,6 +6,9 @@
     enabled = true
     interval = 5
 
+[auth]
+  tokenAge = 86400
+
 [server]
   ginmode = "debug"
   path = "/api"

@@ -18,11 +18,16 @@ func JWTAuth() gin.HandlerFunc {
 		}
 
 		tokenString := c.GetHeader("Authorization")
+		a, err := c.Cookie("Authorization")
 
-		if tokenString == "" {
+		if tokenString == "" && err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "request does not contain an access token"})
 			c.Abort()
 			return
+		}
+
+		if tokenString == "" {
+			tokenString = a
 		}
 
 		if err := auth.ValidateToken(tokenString); err != nil {
@@ -31,6 +36,7 @@ func JWTAuth() gin.HandlerFunc {
 			return
 		}
 
+		c.Set("authorized", true)
 		c.Next()
 	}
 }
@@ -41,12 +47,13 @@ func APITokenAuth() gin.HandlerFunc {
 
 		var apiToken models.APIToken
 
-		tx := models.DB.First(&apiToken, "token = ?", tokenString)
+		tx := models.DB.Limit(1).Find(&apiToken, "token = ?", tokenString)
 
 		if tx.Error != nil {
 			c.Set("api_token", false)
 		} else if apiToken.Token == tokenString {
 			c.Set("api_token", true)
+			c.Set("authorized", true)
 			tx.Update("last_used", time.Now())
 		}
 

@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <header>{{template "header.tmpl" .title}}</header>
+  </head>
+
+  <style>
+    body {
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .center {
+      justify-content: center;
+      align-items: center;
+      display: flex;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    #login {
+      flex-direction: column;
+    }
+
+    #login > input {
+      margin: 4px;
+    }
+  </style>
+
+  <body class="center">
+    <div>
+      <h2>IBS</h2>
+      <form action="{{.api}}/auth/login" method="post" class="center" id="login">
+        <input type="text" name="email" placeholder="email">
+        <input type="password" name="password" placeholder="password">
+        <input type="submit" value="Login">
+      </form>
+    </div>
+  </body>
+</html>
