@@ -36,6 +36,7 @@ func main() {
 		templates.GET("/images", controllers.ImagesController)
 		templates.GET("/sales", controllers.SalesController)
 		templates.GET("/purchases", controllers.PurchasesController)
+		templates.GET("/purchases/new", controllers.NewPurchaseController)
 		templates.GET("/users", controllers.UsersController)
 		templates.GET("/settings", controllers.SettingsController)
 		templates.GET("/products", controllers.ProductsController)
