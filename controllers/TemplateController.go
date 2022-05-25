@@ -5,7 +5,6 @@ import (
 
 	"github.com/Nierot/InvictusBackend/models"
 	"github.com/gin-gonic/gin"
-	"github.com/k0kubun/pp"
 	"github.com/spf13/viper"
 )
 
@@ -38,9 +37,6 @@ func PurchasesController(c *gin.Context) {
 
 	models.DB.Find(&purchases)
 	models.DB.Find(&products)
-
-	pp.Print(purchases)
-	pp.Print(products)
 
 	c.HTML(http.StatusOK, "purchases.tmpl", gin.H{
 		"title":     "Inkoop",
@@ -97,5 +93,34 @@ func ProductsController(c *gin.Context) {
 		"title":    "Producten",
 		"api":      viper.GetString("Server.Path"),
 		"products": products,
+	})
+}
+
+func TallyController(c *gin.Context) {
+	var (
+		users     []models.User
+		products  []models.Product
+		purchases []models.Purchase
+	)
+
+	models.DB.Find(&products)
+	models.DB.Find(&purchases)
+	models.DB.Model(&models.User{}).
+		Select("id, name, username").
+		Scan(&users)
+
+	c.HTML(http.StatusOK, "tally.tmpl", gin.H{
+		"title":     "Verwerk een streeplijst",
+		"api":       viper.GetString("Server.Path"),
+		"users":     users,
+		"products":  products,
+		"purchases": purchases,
+	})
+}
+
+func StatisticsController(c *gin.Context) {
+	c.HTML(http.StatusOK, "statistics.tmpl", gin.H{
+		"title": "Instellingen",
+		"api":   viper.GetString("Server.Path"),
 	})
 }

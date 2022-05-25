@@ -40,6 +40,8 @@ func main() {
 		templates.GET("/users", controllers.UsersController)
 		templates.GET("/settings", controllers.SettingsController)
 		templates.GET("/products", controllers.ProductsController)
+		templates.GET("/tally", controllers.TallyController)
+		templates.GET("/statistics", controllers.StatisticsController)
 	}
 
 	/*
