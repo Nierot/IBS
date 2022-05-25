@@ -11,10 +11,6 @@
   </style>
 
   <script>
-    function test() {
-      console.log({{.purchases}});
-    }
-
     function round(num) {
       let m = Number((Math.abs(num) * 100).toPrecision(15))
       m = Math.round(m) / 100 * Math.sign(num)
@@ -56,7 +52,6 @@
       <div>
         <h2>Inkoop</h2>
         <button><a href="/purchases/new">Nieuwe aankoop</a></button>
-        <button onclick="test()">Test</button>
         <table>
           <tr>
             <th>ID</th>
