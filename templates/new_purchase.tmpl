@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <header>{{template "header.tmpl" .title}}</header>
+  </head>
+  <style>
+    .body {
+      display: flex;
+      margin-top: 20px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    form > * {
+      margin: 3.5px;
+    }
+  </style>
+
+  <script>
+    function test() {
+      console.log({{.products}})
+      console.log({{.users}})
+    }
+
+    function save() {
+      let form = document.querySelector("form")
+      let data = new FormData(form)
+
+      for (var pair of data.entries()) {
+        console.log(pair[0] + ', ' + pair[1]);
+      }
+
+      if (isNaN(data.get("Price")) || isNaN(data.get("Amount")) || isNaN(data.get("Deposit"))) {
+        alert("Doe ff getallen gebruiken")
+        return
+      }
+
+      if (data.get("Price") <= 0 || data.get("Amount") <= 0 || data.get("Deposit") <= 0) {
+        alert("Doe ff getallen invullen")
+        return
+      }
+
+      let body = {}
+      data.forEach((value, key) => {
+        if (!isNaN(value)) {
+          body[key] = parseFloat(value)
+        } else {
+          body[key] = value
+        }
+      })
+
+      fetch("{{.api}}/purchases/", {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      .then(() => {
+        window.location.href = "/purchases"
+     }).catch(err => {
+        alert("Iets ging stuk, check console")
+        console.error(err)
+      })
+    }
+  </script>
+
+  <body>
+    {{template "sidebar.tmpl"}} 
+    <div class="body">
+      <div>
+        <h2>{{.title}}</h2>
+        <form>
+          <label for="ProductID">Product:</label>
+          <select name="ProductID">
+            {{range .products}}
+              <option value="{{.ID}}">{{.Name}}</option>
+            {{end}}
+          </select>
+          
+          <label for="UserID">Gekocht door:</label>
+          <select name="UserID">
+            {{range .users}}
+              <option value="{{.ID}}">{{.Name}}</option>
+            {{end}}
+          </select>
+          
+          <label for="Price">Prijs</label>
+          <input type="number" name="Price" min="0" step="0.01" value="0.00">
+
+          <label for="Deposit">Statiegeld</label>
+          <input type="number" name="Deposit" min="0" step="0.01" value="3.90">
+
+          <label for="Amount">Aantal stuks</label>
+          <input type="number" name="Amount" min="0" step="1" value="24">
+
+          <button onclick="save()" type="button">Opslaan</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
