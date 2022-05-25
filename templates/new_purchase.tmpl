@@ -20,11 +20,6 @@
   </style>
 
   <script>
-    function test() {
-      console.log({{.products}})
-      console.log({{.users}})
-    }
-
     function save() {
       let form = document.querySelector("form")
       let data = new FormData(form)
@@ -38,7 +33,7 @@
         return
       }
 
-      if (data.get("Price") <= 0 || data.get("Amount") <= 0 || data.get("Deposit") <= 0) {
+      if (data.get("Price") <= 0 || data.get("Amount") <= 0 || data.get("Deposit") < 0) {
         alert("Doe ff getallen invullen")
         return
       }
