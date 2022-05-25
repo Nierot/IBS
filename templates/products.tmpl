@@ -12,6 +12,36 @@
   
   <script>
     function addProduct() {
+      let name =  document.querySelector("#productForm :nth-child(1)").value
+      let volume = document.querySelector("#productForm :nth-child(2)").value
+      let alcohol = document.querySelector("#productForm :nth-child(3)").value
+
+      if (name == "" || volume == "" || alcohol == "" || alcohol < 0 || volume < 0) {
+        alert("Vul ff alles goed in")
+        return
+      }
+
+      if (confirm(`Wil je dit product toevoegen? \n Naam: ${name} volume: ${volume} alcohol: ${alcohol}`)) {
+        console.log("yes")
+        fetch("{{.api}}/products/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            name: name,
+            volume: volume,
+            alcohol: alcohol
+          })
+        })
+        .then(() => {
+          window.location.reload()
+        })
+        .catch(err => {
+          alert("AAAAAAAH alles stuk, check console")
+          console.error(err)
+        })
+      }
     }
   </script>
 
@@ -21,11 +51,11 @@
       <div>
         <h2>{{.title}}</h2>
         <div>
-          <form>
-            <input type="text" name="name" placeholder="name">
-            <input type="text" name="price" placeholder="price">
-            <input type="text" name="description" placeholder="description">
-            <button onclick="addProduct()">Toevoegen</button>
+          <form id="productForm">
+            <input type="text" name="name" placeholder="naam">
+            <input type="number" name="volume" placeholder="inhoud">
+            <input type="number" name="alcohol" placeholder="alcohol">
+            <button type="button" onclick="addProduct()">Toevoegen</button>
           </form>
         </div>
         <table>

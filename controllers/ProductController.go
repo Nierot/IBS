@@ -45,7 +45,15 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	p := models.Product{Name: input.Name, Alcohol: input.Alcohol, Volume: input.Volume}
+	alcohol, aErr := input.Alcohol.Float64()
+	volume, vErr := input.Volume.Float64()
+
+	if aErr != nil || vErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"errors": gin.H{"Alcohol": aErr, "Volume": vErr}})
+		return
+	}
+
+	p := models.Product{Name: input.Name, Alcohol: alcohol, Volume: volume}
 	models.DB.Create(&p)
 
 	c.JSON(http.StatusOK, gin.H{"Product": p})

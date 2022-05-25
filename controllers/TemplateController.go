@@ -5,6 +5,7 @@ import (
 
 	"github.com/Nierot/InvictusBackend/models"
 	"github.com/gin-gonic/gin"
+	"github.com/k0kubun/pp"
 	"github.com/spf13/viper"
 )
 
@@ -30,9 +31,41 @@ func SalesController(c *gin.Context) {
 }
 
 func PurchasesController(c *gin.Context) {
+	var (
+		purchases []models.Purchase
+		products  []models.Product
+	)
+
+	models.DB.Find(&purchases)
+	models.DB.Find(&products)
+
+	pp.Print(purchases)
+	pp.Print(products)
+
 	c.HTML(http.StatusOK, "purchases.tmpl", gin.H{
-		"title": "Inkoop",
-		"api":   viper.GetString("Server.Path"),
+		"title":     "Inkoop",
+		"api":       viper.GetString("Server.Path"),
+		"purchases": purchases,
+		"products":  products,
+	})
+}
+
+func NewPurchaseController(c *gin.Context) {
+	var (
+		products []models.Product
+		users    []models.User
+	)
+
+	models.DB.Find(&products)
+	models.DB.Model(&models.User{}).
+		Select("id, name, username").
+		Scan(&users)
+
+	c.HTML(http.StatusOK, "new_purchase.tmpl", gin.H{
+		"title":    "Nieuwe inkoop",
+		"api":      viper.GetString("Server.Path"),
+		"products": products,
+		"users":    users,
 	})
 }
 
