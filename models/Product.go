@@ -1,16 +1,20 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"encoding/json"
+
+	"gorm.io/gorm"
+)
 
 type Product struct {
 	gorm.Model
 	Name    string  `json:"Name"`
-	Volume  int     `json:"Volume"`
-	Alcohol float32 `json:"Alcohol"`
+	Volume  float64 `json:"Volume"`
+	Alcohol float64 `json:"Alcohol"`
 }
 
 type ProductInput struct {
-	Name    string  `json:"Name" binding:"required"`
-	Volume  int     `json:"Volume" binding:"required"`
-	Alcohol float32 `json:"Alcohol" binding:"required"`
+	Name    string      `json:"Name" binding:"required"`
+	Volume  json.Number `json:"Volume" binding:"required"`
+	Alcohol json.Number `json:"Alcohol" binding:"required"`
 }

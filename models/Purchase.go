@@ -15,6 +15,11 @@ type Purchase struct {
 	Settled    bool    `json:"Settled"`  // When the purchase is settled with the originial purchaser
 }
 
+type PurchaseProductJoin struct {
+	Purchase
+	Product
+}
+
 type PurchaseInput struct {
 	UserID    int     `json:"UserID" binding:"required"`
 	ProductID int     `json:"ProductID" binding:"required"`

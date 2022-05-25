@@ -10,10 +10,67 @@
     }
   </style>
 
-  <body>
+  <script>
+    function test() {
+      console.log({{.purchases}});
+    }
+
+    function round(num) {
+      let m = Number((Math.abs(num) * 100).toPrecision(15))
+      m = Math.round(m) / 100 * Math.sign(num)
+      return m.toFixed(2)
+    }
+
+    function onload() {
+      let products = {{.products}}
+      let purchases = {{.purchases}}
+      let table = document.querySelector("table")
+      let html = ``
+
+      for (purchase of purchases) {
+        console.log(purchase)
+        purchase.Product = products.find(product => product.ID == purchase.ProductID)
+
+        html += `
+          <tr>
+            <td>${purchase.ID}</td>
+            <td>${purchase.Product.Name}</td>
+            <td>${purchase.Amount}</td>
+            <td>${purchase.AmountSold}</td>
+            <td>€ ${round(purchase.Price)}</td>
+            <td>€ ${round(purchase.Price/purchase.Amount)}</td>
+            <td>€ ${round(purchase.Deposit)}</td>
+            <td>${purchase.Settled}</td>
+            <td>${new Date(purchase.CreatedAt).toDateString()}</td>
+          </tr>
+        `
+      }
+
+      table.innerHTML += html
+    }
+  </script>
+
+  <body onload="onload()">
     {{template "sidebar.tmpl"}} 
     <div class="body">
-      {{.products}}
+      <div>
+        <h2>Inkoop</h2>
+        <button><a href="/purchases/new">Nieuwe aankoop</a></button>
+        <button onclick="test()">Test</button>
+        <table>
+          <tr>
+            <th>ID</th>
+            <th>Naam</th>
+            <th>Aantal</th>
+            <th>Verkocht</th>
+            <th>Prijs</th>
+            <th>Prijs per stuk</th>
+            <th>Statiegeld</th>
+            <th>Verrekend</th>
+            <th>Datum</th>
+          </tr>
+        </table>
+      </div>
     </div>
   </body>
 </html>
