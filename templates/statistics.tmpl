@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <header>{{template "header.tmpl" .title}}</header>
+  </head>
+  <style>
+    .body {
+      display: flex;
+      margin-top: 20px;
+    }
+  </style>
+
+  <body>
+    {{template "sidebar.tmpl"}} 
+    <div class="body">
+      <div>
+        <h2>{{.title}}</h2>
+      </div>
+    </div>
+  </body>
+</html>
