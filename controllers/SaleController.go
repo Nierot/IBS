@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/Nierot/InvictusBackend/models"
@@ -20,7 +22,6 @@ func CreateSale(c *gin.Context) {
 		UserID:    input.UserID,
 		ProductID: input.ProductID,
 		Amount:    input.Amount,
-		Price:     input.Price,
 	}
 
 	models.DB.Find(&product, "id = ?", input.ProductID)
@@ -54,4 +55,41 @@ func GetAllSales(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"Sales": sales})
+}
+
+func InputTallySheet(c *gin.Context) {
+	data, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	var tallySheet map[int]map[int]int
+
+	if err := json.Unmarshal(data, &tallySheet); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	var products []models.Product
+	models.DB.Find(&products).Where("depleted = ?", false)
+
+	for user, sheet := range tallySheet {
+		for product, amount := range sheet {
+			if amount == 0 {
+				continue
+			}
+
+			sale := models.Sale{
+				UserID:    user,
+				ProductID: product,
+				Amount:    amount,
+				Settled:   false,
+			}
+
+			models.DB.Create(&sale)
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{"TallySheet": tallySheet})
 }
