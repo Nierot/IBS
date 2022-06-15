@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <header>{{template "header.tmpl" .title}}</header>
+  </head>
+  <style>
+    .body {
+      display: flex;
+      margin-top: 20px;
+    }
+
+    table input {
+      width: 100px;
+    }
+  </style>
+
+  <script>
+    function save() {
+      const inputs = document.querySelectorAll('input');
+      const users = {{.users}}
+      const tally = {}
+      const invalid = false
+
+      console.log(users)
+
+      users.forEach(user => {
+        if (user.id === undefined) return
+        tally[user.id] = {}
+      });
+
+      inputs.forEach(input => {
+        const user = parseInt(input.getAttribute('data-user'));
+        const product = parseInt(input.getAttribute('data-product'));
+        const value = parseInt(input.value);
+
+        if (isNaN(value)) {
+          alert(`Veld ${user}, ${product} is niet (goed) ingevuld`);
+          invalid = true;
+          return
+        }
+
+        if (!tally[user]) tally[user] = {}
+
+        tally[user][product] = value;
+      })
+
+      if (invalid) return
+      
+      console.log(JSON.stringify(tally))
+      fetch("{{.api}}/sales/tally", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(tally)
+      }).then(response => {
+        alert("Streeplijst is opgeslagen")
+      }).catch(err => {
+        console.error(err)
+        alert("Er is iets fout gegaan")
+      })
+    }
+  </script>
+
+  <body>
+    {{template "sidebar.tmpl"}} 
+    <div class="body">
+      <div>
+        <h2>{{.title}}</h2>
+        <p>
+          Hoeveel heeft iedereen gezopen?
+        </p>
+        <table id="tallyTable">
+          <tr width="20">
+            <th width="20">Naam</th>
+            {{range .products}}
+              <th width="20">{{.Name}}</th>
+            {{end}}
+          </tr>
+
+          {{range $user := .users}}
+            <tr>
+              <td>{{$user.Name}}</td>
+              {{range $product := $.products}}
+                <td>
+                  <input type="number" data-user={{$user.ID}} data-product={{$product.ID}} value="0">
+                </td>
+              {{end}}
+            </tr>
+          {{end}}
+        </table>
+        <br></br>
+        <button onclick="save()">Opslaan</button>
+      </div>
+    </div>
+  </body>
+</html>

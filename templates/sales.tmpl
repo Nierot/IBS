@@ -13,7 +13,34 @@
   <body>
     {{template "sidebar.tmpl"}} 
     <div class="body">
-      aaaaa
+      <div>
+        <h2>{{.title}}</h2>
+
+        <button onclick="location.href='/tally'">Verwerk streeplijst</button>
+        
+        <table>
+          <tr>
+            <th>Gebruiker</th>
+            <th>Product</th>
+            <th>Aantal</th>
+            <th>Volume per eenheid</th>
+            <th>Alcohol</th>
+            <th>Verrekend</th>
+            <th>Datum aangemaakt</th>
+          </tr>
+          {{range .sales}}
+            <tr>
+              <td>{{.Username}}</td>
+              <td>{{.ProductName}}</td>
+              <td>{{.SalesAmount}}</td>
+              <td>{{.Volume}}</td>
+              <td>{{.Alcohol}}</td>
+              <td>{{.Settled}}</td>
+              <td>{{.SaleCreatedAt.Format "02 Jan 2006, 15:04:05"}}
+            </tr>
+          {{end}}
+        </table>
+      </div>
     </div>
   </body>
 </html>

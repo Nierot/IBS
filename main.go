@@ -1,9 +1,12 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/Nierot/InvictusBackend/controllers"
 	"github.com/Nierot/InvictusBackend/middleware"
 	"github.com/Nierot/InvictusBackend/models"
+	"github.com/bwmarrin/discordgo"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -12,6 +15,7 @@ import (
 func main() {
 	makeConfig()
 
+	discord := setupDiscord()
 	r := gin.Default()
 
 	r.Use(gin.Logger())
@@ -38,6 +42,7 @@ func main() {
 		templates.GET("/purchases", controllers.PurchasesController)
 		templates.GET("/purchases/new", controllers.NewPurchaseController)
 		templates.GET("/users", controllers.UsersController)
+		templates.GET("/music", controllers.MusicController)
 		templates.GET("/settings", controllers.SettingsController)
 		templates.GET("/products", controllers.ProductsController)
 		templates.GET("/tally", controllers.TallyController)
@@ -77,6 +82,7 @@ func main() {
 	sales := secured.Group("/sales")
 	{
 		sales.POST("/", controllers.CreateSale)
+		sales.POST("/tally", controllers.InputTallySheet)
 		sales.GET("/", controllers.GetAllSales)
 	}
 
@@ -87,6 +93,19 @@ func main() {
 
 	if viper.GetBool("Image.Scan.Enabled") {
 		go controllers.ImageScanner()
+	}
+
+	/*
+		Discord related routes
+	*/
+	quotes := secured.Group("/quotes")
+	{
+		quotes.GET("/random", controllers.GetRandomQuote)
+		quotes.GET("/", controllers.GetAllQuotes)
+	}
+
+	if viper.GetBool("Discord.Scan.Enabled") {
+		go models.QuoteScanner(discord)
 	}
 
 	r.Run("0.0.0.0:" + viper.GetString("Server.Port"))
@@ -108,6 +127,22 @@ func makeConfig() {
 	viper.SetDefault("Image.Scan.Enabled", true)
 	viper.SetDefault("Image.Scan.Interval", 5)
 
+	viper.SetDefault("Discord.Token", "<BotToken>")
+	viper.SetDefault("Discord.QuoteChannel", "<QuoteChannelID>")
+	viper.SetDefault("Discord.Scan.Enabled", true)
+	viper.SetDefault("Discord.Scan.Interval", 5)
+
 	viper.ReadInConfig()
 	viper.SafeWriteConfig()
+}
+
+func setupDiscord() *discordgo.Session {
+	discord, err := discordgo.New("Bot " + viper.GetString("Discord.Token"))
+
+	if err != nil {
+		fmt.Println("Discord token not working!")
+		panic(err)
+	}
+
+	return discord
 }

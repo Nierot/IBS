@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Nierot/InvictusBackend/models"
@@ -23,9 +24,28 @@ func ImagesController(c *gin.Context) {
 }
 
 func SalesController(c *gin.Context) {
+	var sales []models.SaleJoin
+
+	models.DB.
+		Model(&models.Sale{}).
+		Select(`
+			sales.amount as sales_amount, 
+			sales.settled as settled, 
+			sales.created_at as sale_created_at,
+			users.username as username, 
+			products.name as product_name, 
+			products.volume as volume, 
+			products.alcohol as alcohol`).
+		Joins("INNER JOIN users ON sales.user_id = users.id").
+		Joins("INNER JOIN products ON sales.product_id = products.id").
+		Scan(&sales)
+
+	fmt.Println(sales)
+
 	c.HTML(http.StatusOK, "sales.tmpl", gin.H{
 		"title": "Verkoop",
 		"api":   viper.GetString("Server.Path"),
+		"sales": sales,
 	})
 }
 
@@ -74,6 +94,13 @@ func UsersController(c *gin.Context) {
 		"title": "Gebruikers",
 		"api":   viper.GetString("Server.Path"),
 		"users": users,
+	})
+}
+
+func MusicController(c *gin.Context) {
+	c.HTML(http.StatusOK, "music.tmpl", gin.H{
+		"title": "Muziek",
+		"api":   viper.GetString("Server.Path"),
 	})
 }
 
