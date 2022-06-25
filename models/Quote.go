@@ -47,6 +47,10 @@ func QuoteScanner(discord *discordgo.Session) {
 		panic(err)
 	}
 
+	if len(channelMsgs) == 0 {
+		fmt.Println("[DiscordScanner] Found no quotes!")
+	}
+
 	for _, msg := range channelMsgs {
 		var (
 			attachments = make([]string, 0)
