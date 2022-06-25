@@ -55,6 +55,8 @@
         body: JSON.stringify(tally)
       }).then(response => {
         alert("Streeplijst is opgeslagen")
+        // redirect to /sales
+        location.replace('/sales')
       }).catch(err => {
         console.error(err)
         alert("Er is iets fout gegaan")
