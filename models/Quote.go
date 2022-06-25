@@ -47,8 +47,14 @@ func QuoteScanner(discord *discordgo.Session) {
 		panic(err)
 	}
 
+	// restart this function after (interval) minutes
+	time.AfterFunc(time.Duration(interval)*time.Minute, func() {
+		QuoteScanner(discord)
+	})
+
 	if len(channelMsgs) == 0 {
 		fmt.Println("[DiscordScanner] Found no quotes!")
+		return
 	}
 
 	for _, msg := range channelMsgs {
@@ -80,11 +86,6 @@ func QuoteScanner(discord *discordgo.Session) {
 		}
 
 	}
-
-	// restart this function after (interval) minutes
-	time.AfterFunc(time.Duration(interval)*time.Minute, func() {
-		QuoteScanner(discord)
-	})
 }
 
 func sliceToString(s []string) string {
