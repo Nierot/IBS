@@ -56,7 +56,9 @@ func main() {
 	{
 		auth.POST("/login", controllers.Login)
 		auth.POST("/token", controllers.GenerateToken)
-		auth.POST("/register", controllers.RegisterUser)
+		if viper.GetBool("Auth.Users.EnableRegistration") {
+			auth.POST("/register", controllers.RegisterUser)
+		}
 	}
 
 	secured := rest.Group("")
@@ -121,8 +123,9 @@ func makeConfig() {
 	viper.SetDefault("Server.Path", "/api")
 
 	viper.SetDefault("Auth.TokenAge", 8600)
+	viper.SetDefault("Auth.Users.EnableRegistration", false)
 
-	viper.SetDefault("Image.Path", "./images")
+	viper.SetDefault("Image.Path", "./static/images")
 
 	viper.SetDefault("Image.Scan.Enabled", true)
 	viper.SetDefault("Image.Scan.Interval", 5)
@@ -131,6 +134,15 @@ func makeConfig() {
 	viper.SetDefault("Discord.QuoteChannel", "<QuoteChannelID>")
 	viper.SetDefault("Discord.Scan.Enabled", true)
 	viper.SetDefault("Discord.Scan.Interval", 5)
+
+	viper.SetDefault("Music.Enabled", true)
+	viper.SetDefault("Music.Path", "./static/music")
+	viper.SetDefault("Music.Scan.Enabled", false)
+	viper.SetDefault("Music.Scan.Interval", 5)
+	viper.SetDefault("Music.News.Source", "<NewsSource>")
+	viper.SetDefault("Music.News.Frequency", 60) // every hour
+	viper.SetDefault("Music.Commercials.Enabled", false)
+	viper.SetDefault("Music.Commercials.Path", "./static/music/commercials")
 
 	viper.ReadInConfig()
 	viper.SafeWriteConfig()
